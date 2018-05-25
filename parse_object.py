@@ -1,23 +1,27 @@
-import json, httplib, urllib
+import http.client
+import json
+import urllib
+
 from parse_credentials import *
+
 
 # Object for each post
 class Post(object):
     def __init__(self,
-                 title = '',
-                 description = '',
-                 media = [],
-                 day = '',
-                 month = '',
-                 year = '',
-                 id = ''):
+                 title='',
+                 description='',
+                 media=[],
+                 day='',
+                 month='',
+                 year='',
+                 identification=''):
         self.title = title
         self.description = description
         self.media = media
         self.day = day
         self.month = month
         self.year = year
-        self.id = id
+        self.identification = identification
 
     def add_title(self, title):
         self.title = title
@@ -37,54 +41,55 @@ class Post(object):
     def add_year(self, year):
         self.year = year
 
-    def add_id(self, id):
-        self.id = id
+    def add_identification(self, identification):
+        self.identification = identification
 
     def get_title(self):
-        print self.title
+        print(self.title)
 
     def get_description(self):
-        print self.description
+        print(self.description)
 
     def get_media(self):
-        print self.media
+        print(self.media)
 
     def get_day(self):
-        print self.day
+        print(self.day)
 
     def get_month(self):
-        print self.month
+        print(self.month)
 
     def get_year(self):
-        print self.year
+        print(self.year)
 
-    def get_id(self):
-        print self.id
+    def identification(self):
+        print(self.identification)
 
     def __str__(self):
-        print self.day
-        print self.month
-        print self.year
-        print self.title
-        print self.description
-        print self.media
-        print self.id
+        print(self.day)
+        print(self.month)
+        print(self.year)
+        print(self.title)
+        print(self.description)
+        print(self.media)
+        print(self.identification)
         return ''
+
 
 # Function for calling all relevant posts for a particular date
 def get_posts(month, day):
     # Establish connection
-    connection = httplib.HTTPSConnection(server_url, 443)
+    connection = http.client.HTTPSConnection(server_url, 443)
     # Filter for specific date
-    params = urllib.urlencode({"where":json.dumps({
-           "month": month,
-           "day": day
-         })})
+    params = urllib.urlencode({"where": json.dumps({
+        "month": month,
+        "day": day
+    })})
     connection.connect()
     connection.request('GET', '/parse/classes/<YOUR_CLASS_NAME>?%s' % params, '', {
-           "X-Parse-Application-Id": app_id,
-           "X-Parse-REST-API-Key": client_key
-         })
+        "X-Parse-Application-Id": app_id,
+        "X-Parse-REST-API-Key": client_key
+    })
     response = json.loads(connection.getresponse().read())
 
     # Make list of all relevant post objects

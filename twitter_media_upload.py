@@ -1,15 +1,12 @@
 # OS independency
 import os
-
 # For exiting
 import sys
-
 # For controlling execution
 import time
 
 # Requests data from the web
 import requests
-
 # Twitter authentication
 from requests_oauthlib import OAuth1
 
@@ -21,10 +18,9 @@ media_endpoint_url = 'https://upload.twitter.com/1.1/media/upload.json'
 post_tweet_url = 'https://api.twitter.com/1.1/statuses/update.json'
 
 oauth = OAuth1(consumer_key,
-               client_secret = consumer_secret,
-               resource_owner_key = access_token,
-               resource_owner_secret = access_token_secret)
-
+               client_secret=consumer_secret,
+               resource_owner_key=access_token,
+               resource_owner_secret=access_token_secret)
 
 class ImageTweet(object):
     def __init__(self, file_name):
@@ -49,9 +45,9 @@ class ImageTweet(object):
             'media_category': 'tweet_image'
         }
 
-        req = requests.post(url = media_endpoint_url,
-                            data = request_data,
-                            auth = oauth)
+        req = requests.post(url=media_endpoint_url,
+                            data=request_data,
+                            auth=oauth)
         media_id = req.json()['media_id']
 
         self.media_id = media_id
@@ -81,10 +77,10 @@ class ImageTweet(object):
                 'media': chunk
             }
 
-            req = requests.post(url = media_endpoint_url,
-                                data = request_data,
-                                files = files,
-                                auth = oauth)
+            req = requests.post(url=media_endpoint_url,
+                                data=request_data,
+                                files=files,
+                                auth=oauth)
 
             if req.status_code < 200 or req.status_code > 299:
                 print(req.status_code)
@@ -110,9 +106,9 @@ class ImageTweet(object):
             'media_id': self.media_id
         }
 
-        req = requests.post(url = media_endpoint_url,
-                            data = request_data,
-                            auth = oauth)
+        req = requests.post(url=media_endpoint_url,
+                            data=request_data,
+                            auth=oauth)
         print(req.json())
 
         self.processing_info = req.json().get('processing_info', None)
@@ -147,16 +143,15 @@ class ImageTweet(object):
             'media_id': self.media_id
         }
 
-        req = requests.get(url = media_endpoint_url,
-                           params = request_params,
-                           auth = oauth)
+        req = requests.get(url=media_endpoint_url,
+                           params=request_params,
+                           auth=oauth)
 
         self.processing_info = req.json().get('processing_info', None)
         self.check_status()
 
-
-if __name__ == '__main__':
-    imageTweet = ImageTweet(image_filename)
-    imageTweet.upload_init()
-    imageTweet.upload_append()
-    imageTweet.upload_finalize()
+# if __name__ == '__main__':
+#     imageTweet = ImageTweet(image_filename)
+#     imageTweet.upload_init()
+#     imageTweet.upload_append()
+#     imageTweet.upload_finalize()

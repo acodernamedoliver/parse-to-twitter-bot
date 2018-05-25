@@ -1,6 +1,11 @@
 # Get today's date
 import datetime
-
+# Import json to transform media json string to dictionary
+import json
+# Adding a random factor to the Tweet timing
+import random
+# For writing output to file
+import sys
 # Time interval between tweets
 import time
 
@@ -9,21 +14,10 @@ import tweepy
 
 # Import parse object script
 import parse_object
-
-# Import our Twitter credentials from credentials.py
-from twitter_credentials import *
-
 # Import Twitter media upload script
 import twitter_media_upload
-
-# Import json to transform media json string to dictionary
-import json
-
-# Adding a random factor to the Tweet timing
-import random
-
-# For writing output to file
-import sys
+# Import our Twitter credentials from credentials.py
+from twitter_credentials import *
 
 # User agent for downloading images
 user_agent = 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 ' \
@@ -48,16 +42,16 @@ posts = parse_object.get_posts(month_today, day_today)
 sys.stdout = open("./outputs/" + year_today + month_number_today
                   + day_full_today + ".txt", "w")
 
+
 # Tweet every hour
 def tweet():
-
     count = 1
 
     for post in posts:
-        print ''
-        print ''
-        print ''
-        print "Tweet " + str(count)
+        print('')
+        print('')
+        print('')
+        print("Tweet " + str(count))
 
         # Get media file locations in a list
         images = []
@@ -65,12 +59,12 @@ def tweet():
         for key in media_dict:
             image = list(media_dict[key])
             for index in range(len(image)):
-                if image[index:index+3] == ['%', '2', '0']:
-                    image[index:index+3] = [' ', '', '']
+                if image[index:index + 3] == ['%', '2', '0']:
+                    image[index:index + 3] = [' ', '', '']
             images.append('../' + ''.join(image))
-        print ''
-        print "Image list: " + str(images)
-        print ''
+        print('')
+        print("Image list: " + str(images))
+        print('')
 
         tweeted = False
         tweet_fail_count = 0
@@ -80,9 +74,9 @@ def tweet():
             # Randomly choose image
             media_id_list = []
             image = random.choice(images)
-            print ''
-            print "Randomly selected image: " + str(image)
-            print ''
+            print('')
+            print("Randomly selected image: " + str(image))
+            print('')
 
             # Upload chosen image
             image_object = twitter_media_upload.ImageTweet(image)
@@ -92,40 +86,41 @@ def tweet():
                 image_object.upload_finalize()
                 media_id_list.append(image_object.media_id)
             except KeyError:
-                print "KeyError"
-            print ''
-            print "media_id_list: " + str(media_id_list)
-            print ''
+                print("KeyError")
+            print('')
+            print("media_id_list: " + str(media_id_list))
+            print('')
 
             # Make Tweet
             year_diff = int(year_today) - int(post.year)
             try:
-                 if post.title != '':
-                     text = str(year_diff) + 'YOUR_TWEET_TEXT'
-                     api.update_status(status = text, media_ids = media_id_list)
-                     print "Tweet " \
-                           + str(count) \
-                           + " succeeded on " \
-                           + str(datetime.datetime.now())
-                     tweeted = True
-                     time.sleep(random.randint(3600, 7200))
-                 else:
+                if post.title != '':
+                    text = str(year_diff) + 'YOUR_TWEET_TEXT'
+                    api.update_status(status=text, media_ids=media_id_list)
+                    print("Tweet "
+                          + str(count)
+                          + " succeeded on "
+                          + str(datetime.datetime.now()))
+                    tweeted = True
+                    time.sleep(random.randint(3600, 7200))
+                else:
                     pass
             except tweepy.TweepError as e:
                 print(e.reason)
-                print "Tweet "\
-                      + str(count) \
-                      + " failed on " \
-                      + str(datetime.datetime.now())
+                print("Tweet "
+                      + str(count)
+                      + " failed on "
+                      + str(datetime.datetime.now()))
 
         count += 1
-        print ''
-        print ''
-        print ''
-        print "---------------------------------------------------------------"
+        print('')
+        print('')
+        print('')
+        print("---------------------------------------------------------------")
+
 
 # Delay of initial tweet
-time.sleep(random.randint(0,600))
+time.sleep(random.randint(0, 600))
 tweet()
 
 sys.stdout.close()
